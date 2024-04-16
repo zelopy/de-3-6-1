@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>서울특별시 꽃가루 농도 조회</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h1>서울특별시 꽃가루 농도 조회</h1>
+
+<form id="pollenForm">
+    <label for="addr2">구 :</label>
+    <select id="addr2" name="addr2">
+        <option value="">구를 선택하세요</option>
+        {% for entry in addr_data %}
+            <option value="{{ entry.addr2 }}">{{ entry.addr2 }}</option>
+        {% endfor %}
+    </select>
+    <br>
+
+    <label for="addr3">동 :</label>
+    <select id="addr3" name="addr3">
+        <option value="">동을 선택하세요</option>
+    </select>
+    <br><br>
+    <button type="submit">조회</button>
+</form>
+<br>
+<div id="addr_code_result">
+    <!-- 행정코드 출력 위치 -->
+</div>
+<br>
+<div id="result">
+    <!-- 꽃가루 출력 위치 -->
+</div>
+
+<script>
+    $(document).ready(function () {
+        const addrData = {{ addr_data|safe }};
+
+        // 구 선택 시 동 옵션 업데이트
+        $('#addr2').change(function () {
+            const selectedAddr2 = $(this).val();
+            const addr3List = addrData.filter(entry => entry.addr2 === selectedAddr2)[0].addr3;
+
+            // 동 옵션 초기화
+            $('#addr3').empty();
+
+            // 동 옵션 추가
+            for (const addr3 of addr3List) {
+                $('#addr3').append($('<option>', {
+                    value: addr3.name,
+                    text: addr3.name
+                }));
+            }
+        });
+
+        // 폼 제출 시
+        $('#pollenForm').submit(function (e) {
+            e.preventDefault();  // 기본 동작 방지
+
+            const addr2 = $('#addr2').val();
+            const addr3Name = $('#addr3').val();
+
+            // 선택된 addr2와 addr3를 사용하여 addr_code 가져오기
+            const addr3List = addrData.filter(entry => entry.addr2 === addr2)[0].addr3;
+            const addr3 = addr3List.find(addr => addr.name === addr3Name);
+            const addr_code = addr3 ? addr3.addr_code : null;
+            
+            if (addr_code) {
+                const pollen_type = 'pine';
+                $('#addr_code_result').html(`행정구역코드 : ${addr_code}`);
+                $.ajax({
+                    type: "GET",
+                    url: "api/",
+                    data: {
+                        pollen_type: pollen_type,  // 꽃가루 종류 파라미터 추가
+                        area_no: addr_code // addr_code 파라미터 전달
+                    },
+                    success: function (response) {
+                        if (response.error) {
+                            $('#result').text(response.error);
+                        } else {
+                            $('#result').html(`
+                                <p>오늘의 소나무 꽃가루 농도: ${response.body.items.item[0].today}</p>
+                                <p>내일의 소나무 꽃가루 농도: ${response.body.items.item[0].tomorrow}</p>
+                                <p>모레의 소나무 꽃가루 농도: ${response.body.items.item[0].dayaftertomorrow}</p>
+                            `);
+                        }
+                    },
+                    error: function (error) {
+                        $('#result').text("데이터를 가져오는 중 문제가 발생했습니다.");
+                    }
+                });
+            } else {
+                $('#result').text("행정구역 코드를 찾을 수 없습니다.");
+            }
+
+        });
+    });
+</script>
+
+</body>
+</html>
