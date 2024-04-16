@@ -19,15 +19,20 @@ import os
 names = ["station_id", "station_name", "raccnt", "station_lat", "station_lon"]
 bike = pd.read_csv("seoulbikeinfo.txt", sep='|', names=names, encoding='utf-8', header=0)
 
-gdf_bike = gpd.GeoDataFrame(bike, geometry=gpd.points_from_xy(bike["station_lon"], bike["station_lat"]), crs='epsg:4326')
+gdf_bike = gpd.GeoDataFrame(bike, geometry=gpd.points_from_xy(bike["station_lon"], bike["station_lat"]), crs='WGS84')
+# point = Point(bike["station_lat"], bike["station_lon"])
 
-# point = Point(bike["station_lat"][0], bike["station_lon"])
-
-# TRAN_4326_TO_3857 = Transformer.from_crs("EPSG:4326", "EPSG:3857")
 gdf_dong = gpd.read_file('../DONG_PG.shp', encoding='cp949')
 gdf_bike_dong = gpd.sjoin(gdf_bike.to_crs("epsg:5186"), gdf_dong)
 gdf_bike_dong = gdf_bike_dong.drop(['geometry', 'index_right', 'BASE_DATE', 'ADM_CD'], axis = 1)
+
+names = ['gu', 'num', 'ADM_NM']
+gudong = pd.read_csv("../guanddong.txt", sep='\t', names=names)
+gudong = gudong.drop('num', axis = 1)
+gdf_bike_dong = pd.merge(left=gdf_bike_dong, right=gudong, how='inner', on="ADM_NM")
+
 gdf_bike_dong.to_csv('seoulblikeinfo.csv', sep=',')
+
 
 """
 # 기본 정보 가져오기
