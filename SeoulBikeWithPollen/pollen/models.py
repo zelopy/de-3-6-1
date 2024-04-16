@@ -10,17 +10,17 @@ latitude : 위도
 '''
 class PollenAddrCode(models.Model):
     # 행정구역코드
-    addr_code = models.CharField(max_length=10, verbose_name='행정구역코드')
+    addr_code = models.CharField(primary_key=True, max_length=10, verbose_name='행정구역코드')
     # 행정주소1(시)
-    addr1 = models.CharField(max_length=20, verbose_name='행정주소1(시)')
+    addr1 = models.CharField(max_length=20, default='', verbose_name='행정주소1(시)')
     # 행정주소2(구)
-    addr2 = models.CharField(max_length=20, verbose_name='행정주소2(구)')
+    addr2 = models.CharField(max_length=20, default='', verbose_name='행정주소2(구)')
     # 행정주소3(동)
-    addr3 = models.CharField(max_length=20, verbose_name='행정주소3(동)')
+    addr3 = models.CharField(max_length=20, default='', verbose_name='행정주소3(동)')
     # 경도
-    longitude = models.FloatField()
+    longitude = models.CharField(max_length=20)
     # 위도
-    latitude = models.FloatField()
+    latitude = models.CharField(max_length=20)
 
 
 class PollenApi(models.Model):

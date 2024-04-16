@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import serializers, generics, renderers
 from .models import PollenAddrCode
 from pollen.serializers import *
-from .pollen_api_service import get_pollen_data
+from .pollen_api_service import get_pollen_data, addr_code_list
 from rest_framework.response import Response
+from django.http import JsonResponse
 
 class PollenApiView(generics.ListAPIView):
     renderer_classes = [renderers.JSONRenderer]
@@ -41,34 +42,9 @@ class PollenApiView(generics.ListAPIView):
 '''
 행정구역코드 목록 조회
 '''
-class PollenAddrListView(generics.ListAPIView):
-    queryset = PollenAddrCode.objects.all()
-    renderer_classes = [renderers.JSONRenderer]
-    serializer_class = PollenAddrCodeSerializer
-    print(queryset)
-
-    '''
-    dummy_data = [
-        {'addr2': '성동구', 'addr3': [
-            {'name': '행당제1동', 'addr_code': '1120056000'},
-            {'name': '행당제2동', 'addr_code': '1120056001'},
-            {'name': '응봉동', 'addr_code': '1120056002'},
-            {'name': '금호1가동', 'addr_code': '1120056003'},
-            {'name': '금호2.3가동', 'addr_code': '1120056004'}
-        ]},
-        {'addr2': '광진구', 'addr3': [
-            {'name': '군자동', 'addr_code': '1121573000'},
-            {'name': '중곡제1동', 'addr_code': '1121574000'},
-            {'name': '중곡제2동', 'addr_code': '1121575000'},
-            {'name': '중곡제3동', 'addr_code': '1121576000'},
-            {'name': '중곡제4동', 'addr_code': '1121577000'}
-        ]},
-        {'addr2': '송파구', 'addr3': [
-            {'name': '거여1동', 'addr_code': '1171053100'},
-            {'name': '거여2동', 'addr_code': '1171053200'},
-            {'name': '마천1동', 'addr_code': '1171054000'},
-            {'name': '마천2동', 'addr_code': '1171055000'},
-            {'name': '방이1동', 'addr_code': '1171056100'}
-        ]}
-    ]
-    '''
+def result(request, addr2=None):
+    # print(f'result() addr2:{addr2}')
+    if addr2 is None:
+        addr2 = ''
+    addr_list = addr_code_list(addr2)
+    return JsonResponse({'addr_list': addr_list})

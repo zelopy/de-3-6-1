@@ -2,6 +2,7 @@ import requests
 import json
 from datetime import datetime
 import os
+import sqlite3
 
 # 기상청_꽃가루농도위험지수 조회서비스(3.0)
 '''
@@ -104,3 +105,88 @@ def get_pollen_data(pollen_type, area_no):
 # TEST
 # print(os.getcwd())
 # get_pollen_data('pine', 1100000000)
+
+
+'''
+구, 동, 행정구역코드 목록 조회 함수.
+db.sqlite3 오류로 pollen_db.sqlite3 파일 별도로 생성하여 사용함.
+    
+    Parameters : addr2 (행정구 Ex> 중구, 강남구, 구로구, etc)
+    
+    Returns : Dict (요청 포맷은 아래 참고)
+        dummy_data = [
+            {'addr2': '성동구', 'addr3': [
+                {'name': '행당제1동', 'addr_code': '1120056000'},
+                {'name': '행당제2동', 'addr_code': '1120056001'},
+                {'name': '응봉동', 'addr_code': '1120056002'},
+                {'name': '금호1가동', 'addr_code': '1120056003'},
+                {'name': '금호2.3가동', 'addr_code': '1120056004'}
+            ]},
+            {'addr2': '광진구', 'addr3': [
+                {'name': '군자동', 'addr_code': '1121573000'},
+                {'name': '중곡제1동', 'addr_code': '1121574000'},
+                {'name': '중곡제2동', 'addr_code': '1121575000'},
+                {'name': '중곡제3동', 'addr_code': '1121576000'},
+                {'name': '중곡제4동', 'addr_code': '1121577000'}
+            ]},
+            {'addr2': '송파구', 'addr3': [
+                {'name': '거여1동', 'addr_code': '1171053100'},
+                {'name': '거여2동', 'addr_code': '1171053200'},
+                {'name': '마천1동', 'addr_code': '1171054000'},
+                {'name': '마천2동', 'addr_code': '1171055000'},
+                {'name': '방이1동', 'addr_code': '1171056100'}
+            ]}
+        ]
+'''
+def addr_code_list(addr2):
+    # print(f'addr_code_list({addr2})')
+    db_file = './pollen/pollen_db.sqlite3'
+    check = os.path.isfile(db_file)
+    # print(f'os.getcwd(): {os.getcwd()}')
+    # print(f'check: {check}')
+
+    # conn = sqlite3.connect('./SeoulBikeWithPollen/pollen/pollen_db.sqlite3')
+    conn = sqlite3.connect('./pollen/pollen_db.sqlite3')
+    cursor = conn.cursor()
+    
+    if addr2 != '':
+        # addr2에 포함되는 목록
+        cursor.execute("SELECT * FROM seoul_area_no_list WHERE addr2 = ? AND addr3 IS NOT NULL", [addr2])
+    else:
+        # 전체 목록
+        cursor.execute("SELECT * FROM seoul_area_no_list WHERE addr3 IS NOT NULL")
+
+    result = []
+    addr2_tmp = None
+    addr3_list = []
+
+    rowList = cursor.fetchall()
+
+    # print(f'rowList:{rowList}')
+
+    for row in rowList:
+        addr2, addr3, addr_code = row[2], row[3], str(row[0])
+
+        if addr2_tmp != addr2:
+            if addr2_tmp is not None:
+                result.append({'addr2': addr2_tmp, 'addr3': addr3_list})
+                addr3_list = []
+            addr2_tmp = addr2
+        
+        addr3_list.append({'name': addr3, 'addr_code': addr_code})
+
+    # 마지막 그룹 추가
+    if addr2_tmp is not None:
+        result.append({'addr2': addr2_tmp, 'addr3': addr3_list})
+    
+    return result
+
+
+# rs = addr_code_list('강남구')
+# rs = addr_code_list('')
+
+# file_path = 'result.txt'
+# with open(file_path, 'w') as file:
+#     file.writelines(str(rs))
+
+# print(rs)
