@@ -1,6 +1,7 @@
 import requests
 import json
 from datetime import datetime
+import os
 
 # 기상청_꽃가루농도위험지수 조회서비스(3.0)
 '''
@@ -43,18 +44,17 @@ from datetime import datetime
 꽃가루 농도 조회
     
     Parameters : 
-        pollen_tyep : 꽃가루 종류
+        pollen_type : 꽃가루 종류
             pine : 소나무
             weeds : 잡초류
             oak : 참나무
         area_no : 행정구역코드
-    
-    Returns:
-
+    Returns : 
+        JSON
 '''
 def get_pollen_data(pollen_type, area_no):
     # 공공데이터포털에서 발급받은 인증키
-    key_file = 'pollen_key.json'
+    key_file = './SeoulBikeWithPollen/pollen/pollen_key.json'
     with open(key_file) as f:
         key_json = json.load(f)
     service_key = key_json.get('SERVICE_KEY', '')
@@ -72,13 +72,18 @@ def get_pollen_data(pollen_type, area_no):
     time = datetime.now().strftime('%Y%m%d%H')
 
     # 꽃가루 농도 위험 지수(소나무) 조회
-    url_pine = f"https://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/getPinePollenRiskIdxV3?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
+    if pollen_type == 'pine':
+        type_str = 'getPinePollenRiskIdxV3'
     # 꽃가루 농도 위험 지수(잡초류) 조회
-    url_weeds = f"https://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/getWeedsPollenRiskIdxV3?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
+    elif pollen_type == 'weeds':
+        type_str = 'getWeedsPollenRiskIdxV3'
     # 꽃가루 농도 위험 지수(참나무) 조회
-    url_oak = f"https://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/getOakPollenRiskIdxV3?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
+    elif pollen_type == 'oak':
+        type_str = 'getOakPollenRiskIdxV3'
 
-    response = requests.get(url_pine)
+    url = f"https://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/{type_str}?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
+    
+    response = requests.get(url)
     contents = response.text
 
     '''
@@ -95,3 +100,7 @@ def get_pollen_data(pollen_type, area_no):
     print(json_obj)
 
     return json_obj
+
+# TEST
+# print(os.getcwd())
+# get_pollen_data('pine', 1100000000)
