@@ -12,7 +12,7 @@ class PollenApiView(generics.ListAPIView):
     # 행정구역코드 찾기
     def get_queryset(self):
         return PollenAddrCode.objects.filter(
-            addr1=self.request.query_params.get('addr1', None),
+            #addr1=self.request.query_params.get('addr1', None),
             addr2=self.request.query_params.get('addr2', None),
             addr3=self.request.query_params.get('addr3', None)
             )
@@ -38,3 +38,37 @@ class PollenApiView(generics.ListAPIView):
         else:
             return Response({'error': '데이터가 없습니다.'})
 
+'''
+행정구역코드 목록 조회
+'''
+class PollenAddrListView(generics.ListAPIView):
+    queryset = PollenAddrCode.objects.all()
+    renderer_classes = [renderers.JSONRenderer]
+    serializer_class = PollenAddrCodeSerializer
+    print(queryset)
+
+    '''
+    dummy_data = [
+        {'addr2': '성동구', 'addr3': [
+            {'name': '행당제1동', 'addr_code': '1120056000'},
+            {'name': '행당제2동', 'addr_code': '1120056001'},
+            {'name': '응봉동', 'addr_code': '1120056002'},
+            {'name': '금호1가동', 'addr_code': '1120056003'},
+            {'name': '금호2.3가동', 'addr_code': '1120056004'}
+        ]},
+        {'addr2': '광진구', 'addr3': [
+            {'name': '군자동', 'addr_code': '1121573000'},
+            {'name': '중곡제1동', 'addr_code': '1121574000'},
+            {'name': '중곡제2동', 'addr_code': '1121575000'},
+            {'name': '중곡제3동', 'addr_code': '1121576000'},
+            {'name': '중곡제4동', 'addr_code': '1121577000'}
+        ]},
+        {'addr2': '송파구', 'addr3': [
+            {'name': '거여1동', 'addr_code': '1171053100'},
+            {'name': '거여2동', 'addr_code': '1171053200'},
+            {'name': '마천1동', 'addr_code': '1171054000'},
+            {'name': '마천2동', 'addr_code': '1171055000'},
+            {'name': '방이1동', 'addr_code': '1171056100'}
+        ]}
+    ]
+    '''
