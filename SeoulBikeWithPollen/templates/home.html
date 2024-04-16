@@ -1,0 +1,14 @@
+{% for value in api_dict %}
+    <br>
+    <div class="card">
+        <div class="card-header">
+            {{ value.stationName }}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">parkingbiketotcnt : {{value.parkingbiketotcnt}}</h5>
+            <p class="card-text"><br>
+            rackTotcnt : {{value.rackTotCnt}}</p>
+            shared : {{value.shared}}</p>
+        </div>
+    </div>
+{% endfor %}

@@ -6,4 +6,6 @@ from django.conf.urls import static
 
 urlpatterns = [
     path('', views.index, name='main'),
+    path('home/', views.home, name='home'),
+    path('kakaomap/', views.kakaomap, name='kakaomap'),
 ]
