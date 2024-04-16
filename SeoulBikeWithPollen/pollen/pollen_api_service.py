@@ -53,8 +53,13 @@ import os
         JSON
 '''
 def get_pollen_data(pollen_type, area_no):
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     # 공공데이터포털에서 발급받은 인증키
-    key_file = './SeoulBikeWithPollen/pollen/pollen_key.json'
+    # key_file = './SeoulBikeWithPollen/pollen/pollen_key.json'
+    key_file = os.path.join(BASE_DIR, 'pollen', 'pollen_key.json')
+
     with open(key_file) as f:
         key_json = json.load(f)
     service_key = key_json.get('SERVICE_KEY', '')
