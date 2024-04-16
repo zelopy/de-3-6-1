@@ -144,14 +144,14 @@ db.sqlite3 오류로 pollen_db.sqlite3 파일 별도로 생성하여 사용함.
         ]
 '''
 def addr_code_list(addr2):
-    # print(f'addr_code_list({addr2})')
-    db_file = './pollen/pollen_db.sqlite3'
-    check = os.path.isfile(db_file)
-    # print(f'os.getcwd(): {os.getcwd()}')
-    # print(f'check: {check}')
+    
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_file = os.path.join(BASE_DIR, 'pollen', 'pollen_db.sqlite3')
+    
+    if not os.path.exists(db_file):
+        return "데이터베이스 파일이 없습니다."
 
-    # conn = sqlite3.connect('./SeoulBikeWithPollen/pollen/pollen_db.sqlite3')
-    conn = sqlite3.connect('./pollen/pollen_db.sqlite3')
+    conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
     
     if addr2 != '':
