@@ -10,34 +10,15 @@ class PollenApiView(generics.ListAPIView):
     renderer_classes = [renderers.JSONRenderer]
     serializer_class = PollenAddrCodeSerializer
     
-    # 행정구역코드 찾기
-    def get_queryset(self):
-        return PollenAddrCode.objects.filter(
-            #addr1=self.request.query_params.get('addr1', None),
-            addr2=self.request.query_params.get('addr2', None),
-            addr3=self.request.query_params.get('addr3', None)
-            )
-    
     def get(self, request, *args, **kwargs):
         print('PollenApiView.get() called')
-        queryset = self.get_queryset()
-        if queryset.exists():
-            obj = queryset.first()
-            addr_code = obj.addr_code
+        pollen_type = self.request.query_params.get('pollen_type', None)
+        area_no = self.request.query_params.get('area_no', None)
 
-            result_pine = get_pollen_data('pine', addr_code)
-            # result_weeds = get_pollen_data('weeds', addr_code)
-            # result_oak = get_pollen_data('oak', addr_code)
+        result = get_pollen_data(pollen_type, area_no)
+        print(result)
 
-            print(result_pine)
-            # print(result_weeds)
-            # print(result_oak)
-
-            # TODO : JSON 병합? 아니면 타입별 구분 호출?
-
-            return Response(result_pine)
-        else:
-            return Response({'error': '데이터가 없습니다.'})
+        return Response(result)
 
 '''
 행정구역코드 목록 조회

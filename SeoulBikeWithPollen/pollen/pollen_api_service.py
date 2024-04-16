@@ -146,7 +146,7 @@ def addr_code_list(addr2):
     # print(f'check: {check}')
 
     # conn = sqlite3.connect('./SeoulBikeWithPollen/pollen/pollen_db.sqlite3')
-    conn = sqlite3.connect('./pollen/pollen_db.sqlite3')
+    conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
     
     if addr2 != '':
