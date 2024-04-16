@@ -4,5 +4,6 @@ from .views import *
 app_name = 'pollen'
 
 urlpatterns = [
-    path('', PollenApiView.as_view()),
+    path('', PollenInputView.as_view()),
+    path('api/', PollenApiView.as_view(),name='addrCode'),
 ]
