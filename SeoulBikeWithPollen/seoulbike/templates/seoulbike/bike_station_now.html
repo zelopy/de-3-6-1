@@ -1,0 +1,31 @@
+<!-- bike_station_now.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>따릉이 대여소 현재 상태</title>
+</head>
+<body>
+    <h1>따릉이 대여소 현재 상태</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>대여소 ID</th>
+                <th>대여소 이름</th>
+                <th>자전거 수</th>
+                <th>거치율(%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for now in nows %}
+            <tr>
+                <td>{{ now.station_id }}</td>
+                <td>{{ now.station_name }}</td>
+                <td>{{ now.bikecnt }}</td>
+                <td>{{ now.bikeratio }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
