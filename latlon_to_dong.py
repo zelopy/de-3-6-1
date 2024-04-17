@@ -19,13 +19,17 @@ import sqlite3
 print(os.getcwd())
 df = pd.read_csv('seoulblikeinfo.csv', sep=',')
 df = df.rename(columns={"station_lat":"latitude", "station_lon":"longitude", "ADM_NM":"addr2","gu":"addr1"}).drop(df.columns[0], axis=1)
+
+for i in df.iterrows():
+    print(i[0])
+
 # print(df)
-conn = sqlite3.connect('db.sqlite3')
-df.to_sql('seoulbike_SeoulBikeStationInfo', conn, if_exists="replace", index=False)
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM seoulbike_seoulbikestationinfo WHERE addr2='연희동';")
-# cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-print(cursor.fetchall())
+# conn = sqlite3.connect('db.sqlite3')
+# df.to_sql('seoulbike_SeoulBikeStationInfo', conn, if_exists="replace", index=False)
+# cursor = conn.cursor()
+# cursor.execute("SELECT * FROM seoulbike_seoulbikestationinfo WHERE addr2='연희동';")
+# # cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+# print(cursor.fetchall())
 
 
 """
