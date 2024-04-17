@@ -1,0 +1,47 @@
+<!-- bike_station_search.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>따릉이 대여소 정보 검색</title>
+</head>
+<body>
+    <h1>자치구와 동을 선택하세요:</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="gu">자치구:</label>
+        <select id="gu" name="gu">
+            {% for gu in gu_list %}
+                <option value="{{ gu }}">{{ gu }}</option>
+            {% endfor %}
+        </select>
+        <label for="dong">동:</label>
+        <select id="dong" name="dong">
+            <option value="">선택하세요</option>
+        </select>
+        <button type="submit">검색</button>
+    </form>
+
+    <script>
+        document.getElementById("gu").addEventListener("change", function() {
+            var gu = this.value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/get_dongs/?gu=" + gu, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var dongs = JSON.parse(xhr.responseText);
+                    var dongSelect = document.getElementById("dong");
+                    dongSelect.innerHTML = '<option value="">선택하세요</option>';
+                    for (var i = 0; i < dongs.length; i++) {
+                        var option = document.createElement("option");
+                        option.text = dongs[i];
+                        option.value = dongs[i];
+                        dongSelect.appendChild(option);
+                    }
+                }
+            };
+            xhr.send();
+        });
+    </script>
+</body>
+</html>

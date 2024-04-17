@@ -14,13 +14,25 @@ import pyproj
 import numpy as np
 import folium
 import os
+import sqlite3
+
+print(os.getcwd())
+df = pd.read_csv('seoulblikeinfo.csv', sep=',')
+df = df.rename(columns={"station_lat":"latitude", "station_lon":"longitude", "ADM_NM":"addr2","gu":"addr1"}).drop(df.columns[0], axis=1)
+# print(df)
+conn = sqlite3.connect('db.sqlite3')
+df.to_sql('seoulbike_SeoulBikeStationInfo', conn, if_exists="replace", index=False)
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM seoulbike_seoulbikestationinfo WHERE addr2='연희동';")
+# cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+print(cursor.fetchall())
 
 
+"""
 names = ["station_id", "station_name", "raccnt", "station_lat", "station_lon"]
 bike = pd.read_csv("seoulbikeinfo.txt", sep='|', names=names, encoding='utf-8', header=0)
 
 gdf_bike = gpd.GeoDataFrame(bike, geometry=gpd.points_from_xy(bike["station_lon"], bike["station_lat"]), crs='WGS84')
-# point = Point(bike["station_lat"], bike["station_lon"])
 
 gdf_dong = gpd.read_file('../DONG_PG.shp', encoding='cp949')
 gdf_bike_dong = gpd.sjoin(gdf_bike.to_crs("epsg:5186"), gdf_dong)
@@ -33,8 +45,6 @@ gdf_bike_dong = pd.merge(left=gdf_bike_dong, right=gudong, how='inner', on="ADM_
 
 gdf_bike_dong.to_csv('seoulblikeinfo.csv', sep=',')
 
-
-"""
 # 기본 정보 가져오기
 key = open("key.txt", 'r').read()
 url1 = f'http://openapi.seoul.go.kr:8088/{key}/json/bikeList/1/1000/'
