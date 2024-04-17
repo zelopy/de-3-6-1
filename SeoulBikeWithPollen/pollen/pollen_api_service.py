@@ -58,13 +58,9 @@ def get_pollen_data(pollen_type, area_no):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # 공공데이터포털에서 발급받은 인증키
-<<<<<<< HEAD
     # key_file = './SeoulBikeWithPollen/pollen/pollen_key.json'
     key_file = os.path.join(BASE_DIR, 'pollen', 'pollen_key.json')
 
-=======
-    key_file = './pollen/pollen_key.json'
->>>>>>> origin/pollen_backend
     with open(key_file) as f:
         key_json = json.load(f)
     service_key = key_json.get('SERVICE_KEY', '')
@@ -107,7 +103,7 @@ def get_pollen_data(pollen_type, area_no):
         todaysaftertomorrow : 글피 예측값 (0~3)
     '''
     json_obj = json.loads(contents)
-    # print(json_obj)
+    print(json_obj)
 
     return json_obj
 
@@ -155,10 +151,6 @@ def addr_code_list(addr2):
     if not os.path.exists(db_file):
         return "데이터베이스 파일이 없습니다."
 
-<<<<<<< HEAD
-=======
-    # conn = sqlite3.connect('./SeoulBikeWithPollen/pollen/pollen_db.sqlite3')
->>>>>>> origin/pollen_backend
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
     
