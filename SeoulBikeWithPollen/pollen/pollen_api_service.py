@@ -54,8 +54,13 @@ import sqlite3
         JSON
 '''
 def get_pollen_data(pollen_type, area_no):
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     # 공공데이터포털에서 발급받은 인증키
-    key_file = './pollen/pollen_key.json'
+    # key_file = './SeoulBikeWithPollen/pollen/pollen_key.json'
+    key_file = os.path.join(BASE_DIR, 'pollen', 'pollen_key.json')
+
     with open(key_file) as f:
         key_json = json.load(f)
     service_key = key_json.get('SERVICE_KEY', '')
@@ -69,9 +74,15 @@ def get_pollen_data(pollen_type, area_no):
     # area_no = 1100000000
     if area_no is None:
         return "행정구역코드가 없습니다."
+    
     # 2024041018 (형식 : yyyyMMddHH, 최근 1일 간의 자료만 제공)
-    time = datetime.now().strftime('%Y%m%d%H')
-
+    # 현재시간
+    cur_hour = datetime.now().strftime('%H')
+    # 현재시간이 18시 이후라면 today가 비어있기 때문에 06시 기준 데이터를 가져오도록 현재시간 조정
+    if int(cur_hour) > 18:
+        cur_hour = '07'
+    time = datetime.now().strftime('%Y%m%d') + cur_hour
+    
     # 꽃가루 농도 위험 지수(소나무) 조회
     if pollen_type == 'pine':
         type_str = 'getPinePollenRiskIdxV3'
@@ -82,7 +93,7 @@ def get_pollen_data(pollen_type, area_no):
     elif pollen_type == 'oak':
         type_str = 'getOakPollenRiskIdxV3'
 
-    url = f"https://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/{type_str}?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
+    url = f"http://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/{type_str}?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
     
     response = requests.get(url)
     contents = response.text
@@ -98,7 +109,7 @@ def get_pollen_data(pollen_type, area_no):
         todaysaftertomorrow : 글피 예측값 (0~3)
     '''
     json_obj = json.loads(contents)
-    # print(json_obj)
+    print(json_obj)
 
     return json_obj
 
@@ -139,13 +150,13 @@ db.sqlite3 오류로 pollen_db.sqlite3 파일 별도로 생성하여 사용함.
         ]
 '''
 def addr_code_list(addr2):
-    # print(f'addr_code_list({addr2})')
-    db_file = './pollen/pollen_db.sqlite3'
-    check = os.path.isfile(db_file)
-    # print(f'os.getcwd(): {os.getcwd()}')
-    # print(f'check: {check}')
+    
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    db_file = os.path.join(BASE_DIR, 'pollen', 'pollen_db.sqlite3')
+    
+    if not os.path.exists(db_file):
+        return "데이터베이스 파일이 없습니다."
 
-    # conn = sqlite3.connect('./SeoulBikeWithPollen/pollen/pollen_db.sqlite3')
     conn = sqlite3.connect(db_file)
     cursor = conn.cursor()
     
