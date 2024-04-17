@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 class SeoulBikeStationInfo(models.Model):
     # 대여소 ID
-    station_id = models.IntegerField(verbose_name="대여소 ID")
+    station_id = models.CharField(max_length=20, verbose_name="대여소 ID")
     # 대여소 이름
     station_name = models.CharField(max_length=100, verbose_name="대여소 이름")
     # 거치대 수

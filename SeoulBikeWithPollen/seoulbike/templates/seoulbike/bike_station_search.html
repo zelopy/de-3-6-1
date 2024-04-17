@@ -7,10 +7,11 @@
 </head>
 <body>
     <h1>자치구와 동을 선택하세요:</h1>
-    <form method="post">
+    <form id="search-form" method="post" action="">
         {% csrf_token %}
         <label for="gu">자치구:</label>
         <select id="gu" name="gu">
+            <option value="">선택하세요</option>
             {% for gu in gu_list %}
                 <option value="{{ gu }}">{{ gu }}</option>
             {% endfor %}
@@ -26,10 +27,13 @@
         document.getElementById("gu").addEventListener("change", function() {
             var gu = this.value;
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/get_dongs/?gu=" + gu, true);
+            xhr.open("POST", "", true);
+            xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    var dongs = JSON.parse(xhr.responseText);
+                    var response = JSON.parse(xhr.responseText);
+                    var dongs = response.dong_list;
                     var dongSelect = document.getElementById("dong");
                     dongSelect.innerHTML = '<option value="">선택하세요</option>';
                     for (var i = 0; i < dongs.length; i++) {
@@ -40,7 +44,7 @@
                     }
                 }
             };
-            xhr.send();
+            xhr.send("gu=" + gu);
         });
     </script>
 </body>

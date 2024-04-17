@@ -28,11 +28,8 @@ def save_seoulbikeinfo(key):
         f.write("#station_id | station_name | raccnt | station_lat | station_lon\n9")
         for res in ress:
             raccnt = res["rackTotCnt"]
-            try:
-                id, name = res["stationName"].split(". ")
-            except ValueError:
-                id = res["stationName"].split(".")[0]
-                name = ".".join(res["stationName"].split(".")[1:])
+            name = res["stationName"]
+            id = res["stationId"]
             stationlat = res["stationLatitude"][:-2]
             stationlon = res["stationLongitude"][:-2]
             f.write("%s | %s | %s | %s | %s\n" %(id, name, raccnt, stationlat, stationlon))
@@ -61,7 +58,7 @@ def latlon_to_gudong(seoulbikeinfo, shapefname, gudongfname):
     gudong = gudong.drop('num', axis = 1)
     gdf_bike_dong = pd.merge(left=gdf_bike_dong, right=gudong, how='inner', on="ADM_NM")
 
-    gdf_bike_dong.to_csv('seoulblikeinfo.csv', sep=',')
+    gdf_bike_dong.to_csv('seoulblikeinfo3.csv', sep=',')
 
 
 if __name__ == "__main__":
