@@ -1,7 +1,6 @@
 {% load static %}
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
-<!-- 필요없는 부분 지우기. html파일 분리. 재사용 -->
 
 <head>
     <script src="{% static 'js/color-modes.js' %}"></script>
@@ -13,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.122.0">
-    <title>KAKAOMAP Template </title>
+    <title>Dashboard Template </title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/dashboard/">
 
@@ -118,7 +117,7 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Map Cluster</h1>
+                    <h1 class="h2">Dashboard</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
                             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -128,35 +127,73 @@
                 </div>
 
                 <!-- <canvas id="myChart" width="900px" height="380px">  </canvas> -->
-                <div id="map" style="width:900px;height:380px;"></div>
-                <script type="text/javascript"
-                    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8dccf468719bb6aad174ec3be6a6bdcf&libraries=clusterer">
-                </script>
+                <h1>자치구와 동을 선택하세요:</h1>
+                <form id="search-form" method="post" action="">
+                    {% csrf_token %}
+                    <label for="gu">자치구:</label>
+                    <select id="gu" name="gu">
+                        <option value="">선택하세요</option>
+                        {% for gu in gu_list %}
+                        <option value="{{ gu }}">{{ gu }}</option>
+                        {% endfor %}
+                    </select>
+                    <label for="dong">동:</label>
+                    <select id="dong" name="dong">
+                        <option value="">선택하세요</option>
+                    </select>
+                    <button type="submit">검색</button>
+                </form>
+
                 <script>
-                    var map = new kakao.maps.Map(document.getElementById('map'), { // 지도를 표시할 div
-                        center: new kakao.maps.LatLng(37.56, 127), // 지도의 중심좌표 
-                        level: 9 // 지도의 확대 레벨 
-                    });
-
-                    var clusterer = new kakao.maps.MarkerClusterer({
-                        map: map,
-                        averageCenter: true,
-                        minLevel: 3
-                    });
-
-                    $.get("/main/home/", function (data) {
-
-                        var markers = data.map(function (item) {
-                            return new kakao.maps.Marker({
-                                position: new kakao.maps.LatLng(item.stationLatitude, item
-                                    .stationLongitude)
-                            });
-                        });
-
-                        // 클러스터러에 마커들을 추가합니다
-                        clusterer.addMarkers(markers);
+                    document.getElementById("gu").addEventListener("change", function () {
+                        var gu = this.value;
+                        var xhr = new XMLHttpRequest();
+                        xhr.open("POST", "", true);
+                        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+                        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                var response = JSON.parse(xhr.responseText);
+                                var dongs = response.dong_list;
+                                var dongSelect = document.getElementById("dong");
+                                dongSelect.innerHTML = '<option value="">선택하세요</option>';
+                                for (var i = 0; i < dongs.length; i++) {
+                                    var option = document.createElement("option");
+                                    option.text = dongs[i];
+                                    option.value = dongs[i];
+                                    dongSelect.appendChild(option);
+                                }
+                            }
+                        };
+                        xhr.send("gu=" + gu);
                     });
                 </script>
+
+                <h2>위치정보 및 날씨</h2>
+                <div class="table-responsive small">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">대여소 ID</th>
+                                <th scope="col">대여소 이름</th>
+                                <th scope="col">자전거 수</th>
+                                <th scope="col">거치율(%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for now in nows %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ now.station_id }}</td>
+                                <td>{{ now.station_name }}</td>
+                                <td>{{ now.bikecnt }}</td>
+                                <td>{{ now.bikeratio }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </main>
         </div>
     </div>
