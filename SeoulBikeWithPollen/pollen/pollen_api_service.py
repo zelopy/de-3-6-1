@@ -74,8 +74,13 @@ def get_pollen_data(pollen_type, area_no):
     # area_no = 1100000000
     if area_no is None:
         return "행정구역코드가 없습니다."
-    # 2024041018 (형식 : yyyyMMddHH, 최근 1일 간의 자료만 제공)
-    time = datetime.now().strftime('%Y%m%d%H')
+    
+    # 현재시간
+    cur_hour = datetime.now().strftime('%H')
+    # 현재시간이 18시 이후라면 today가 비어있기 때문에 06시 기준 데이터를 가져오도록 현재시간 조정
+    if int(cur_hour) > 18:
+        cur_hour = '07'
+    time = datetime.now().strftime('%Y%m%d') + cur_hour
 
     # 꽃가루 농도 위험 지수(소나무) 조회
     if pollen_type == 'pine':
@@ -87,9 +92,9 @@ def get_pollen_data(pollen_type, area_no):
     elif pollen_type == 'oak':
         type_str = 'getOakPollenRiskIdxV3'
 
-    url = f"https://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/{type_str}?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
+    url = f"http://apis.data.go.kr/1360000/HealthWthrIdxServiceV3/{type_str}?serviceKey={service_key}&numOfRows={num_of_rows}&pageNo={page_no}&dataType={data_type}&areaNo={area_no}&time={time}"
     
-    response = requests.get(url)
+    response = requests.get(url,verify=False)
     contents = response.text
 
     '''

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>서울특별시 꽃가루 농도 조회</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -33,16 +34,32 @@
     </form>
 
     <br>
-
-    <div id="addr_code_result" class="mt-4">
-        <!-- 행정코드 출력 위치 -->
-    </div>
-
     <br>
-
-    <div id="result" class="mt-4">
-        <!-- 꽃가루 출력 위치 -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-tree fa-3x mr-3" id="pineIcon"></i>
+                <div>
+                    <h4><strong>소나무</strong></h4>
+                    <div id="result_pine">
+                        <!-- 소나무 꽃가루 농도 표시 위치 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-tree fa-3x mr-3" id="oakIcon"></i>
+                <div>
+                    <h4><strong>참나무</strong></h4>
+                    <div id="result_oak">
+                        <!-- 참나무 꽃가루 농도 표시 위치 -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    
 </div>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -65,6 +82,29 @@
             }
         });
 
+        // 농도에 따른 텍스트 매핑
+        const pollenLevelText = {
+            '0': '낮음',
+            '1': '보통',
+            '2': '높음',
+            '3': '매우 높음'
+        };
+    
+        // 농도에 따른 색상 매핑
+        const pollenLevelColor = {
+            '0': 'green',
+            '1': 'yellow',
+            '2': 'orange',
+            '3': 'red'
+        };
+
+        const pollenLevelIconColor = {
+            '0': 'green',
+            '1': 'yellow',
+            '2': 'orange',
+            '3': 'red'
+        };
+
         $('#pollenForm').submit(function (e) {
             e.preventDefault();
 
@@ -75,33 +115,73 @@
             const addr3 = addr3List.find(addr => addr.name === addr3Name);
             const addr_code = addr3 ? addr3.addr_code : null;
             
-            const pollen_type = 'pine';
-
             if (addr_code) {
-                $('#addr_code_result').html(`행정구역코드 : ${addr_code}`);
                 
                 $.ajax({
                     type: "GET",
                     url: "api/",
                     data: {
-                        pollen_type: pollen_type,
+                        pollen_type: 'pine',
                         area_no: addr_code
                     },
-                    success: function (response) {
-                        if (response.error) {
-                            $('#result').text(response.error);
-                        } else {
-                            $('#result').html(`
-                                <p>오늘의 소나무 꽃가루 농도: ${response.body.items.item[0].today}</p>
-                                <p>내일의 소나무 꽃가루 농도: ${response.body.items.item[0].tomorrow}</p>
-                                <p>모레의 소나무 꽃가루 농도: ${response.body.items.item[0].dayaftertomorrow}</p>
-                            `);
+                    success: function(data) {
+                        console.log(data); // 응답 데이터 확인
+                    
+                        if (!data) {
+                            $('#result').text("응답 데이터가 없습니다.");
+                            return;
                         }
+                    
+                        const today = data.today || '데이터 없음';
+                        const levelText = pollenLevelText[today];
+                        const levelColor = pollenLevelColor[today];                    
+                        const levelIconColor = pollenLevelIconColor[today] || 'gray';
+                        
+                        $('#result_pine').html(`
+                            <p><strong>오늘의 꽃가루 농도: <span style="color: ${levelColor};">${levelText}</span></strong></p>
+                        `);
+                        $('#pineIcon').css('color', levelIconColor);
+                    
+                    
                     },
-                    error: function (error) {
+                    
+                    error: function(error) {
                         $('#result').text("데이터를 가져오는 중 문제가 발생했습니다.");
                     }
                 });
+
+                $.ajax({
+                    type: "GET",
+                    url: "api/",
+                    data: {
+                        pollen_type: 'oak',
+                        area_no: addr_code
+                    },
+                    success: function(data) {
+                        console.log(data); // 응답 데이터 확인
+                    
+                        if (!data) {
+                            $('#result').text("응답 데이터가 없습니다.");
+                            return;
+                        }
+                    
+                        const today = data.today || '데이터 없음';
+                        const levelText = pollenLevelText[today];
+                        const levelColor = pollenLevelColor[today];
+                        const levelIconColor = pollenLevelIconColor[today] || 'gray';
+                        
+                        $('#result_oak').html(`
+                            <p><strong>오늘의 꽃가루 농도: <span style="color: ${levelColor};">${levelText}</span></strong></p>
+                        `);
+                        $('#oakIcon').css('color', levelIconColor);
+                    
+                    },
+                    
+                    error: function(error) {
+                        $('#result').text("데이터를 가져오는 중 문제가 발생했습니다.");
+                    }
+                });
+                
             } else {
                 $('#result').text("행정구역 코드를 찾을 수 없습니다.");
             }
