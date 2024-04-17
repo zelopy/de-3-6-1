@@ -55,7 +55,7 @@ import sqlite3
 '''
 def get_pollen_data(pollen_type, area_no):
     # 공공데이터포털에서 발급받은 인증키
-    key_file = './SeoulBikeWithPollen/pollen/pollen_key.json'
+    key_file = './pollen/pollen_key.json'
     with open(key_file) as f:
         key_json = json.load(f)
     service_key = key_json.get('SERVICE_KEY', '')
@@ -98,7 +98,7 @@ def get_pollen_data(pollen_type, area_no):
         todaysaftertomorrow : 글피 예측값 (0~3)
     '''
     json_obj = json.loads(contents)
-    print(json_obj)
+    # print(json_obj)
 
     return json_obj
 
