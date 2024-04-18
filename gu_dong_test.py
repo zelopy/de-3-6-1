@@ -3,12 +3,14 @@ import requests
 import pandas as pd
 import json
 
-
-res1 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/1/100/')
-
+res1 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/1/1000/')
+res2 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/1001/2000/')
+res3 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/2001/2697/')
 
 items = []
 items.extend(json.loads(res1.text)['rentBikeStatus']['row'])
+items.extend(json.loads(res2.text)['rentBikeStatus']['row'])
+items.extend(json.loads(res3.text)['rentBikeStatus']['row'])
 
 
 # 정거장 정보 중 몇개는 위치 정보를 찾을 수 없음
