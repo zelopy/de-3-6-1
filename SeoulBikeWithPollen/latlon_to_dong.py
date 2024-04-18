@@ -6,8 +6,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 import time
+from shapely.geometry import Point, Polygon, LineString
+import geopandas as gpd
 
-key = "586c7a62426c3933313132574a574944"
+# gdf_admin_gu_pg = gpd.read_file('SeoulBikeWithPollen\dong_pg\BND_ADM_DONG_PG.shp', encoding='cp949')  
+# print(gdf_admin_gu_pg.head())
+
+key = open("key.txt", 'r').read()
 url1 = f'http://openapi.seoul.go.kr:8088/{key}/json/bikeList/1/1000/'
 url2 = f'http://openapi.seoul.go.kr:8088/{key}/json/bikeList/1001/2000/'
 url3 = f'http://openapi.seoul.go.kr:8088/{key}/json/bikeList/2001/2694/'
@@ -45,7 +50,7 @@ for res in ress:
     stationlats.append(res["stationLatitude"][:-2])
     stationlons.append(res["stationLongitude"][:-2])
 
-print(raccnts[3])
+# print(raccnts[3])
 # id, name = response1["rentBikeStatus"]["row"][0]["stationName"].split(". ")
 # print(id, name)
 
@@ -62,3 +67,4 @@ print(raccnts[3])
 #     time.sleep(1)
 #     result = driver.find_element(By.ID, "localInfo.map.town")
 #     print(result.text)
+
