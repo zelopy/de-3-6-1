@@ -1,4 +1,8 @@
 import re
+import requests
+import pandas as pd
+import json
+
 
 res1 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/1/100/')
 
