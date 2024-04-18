@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 import folium
 from folium.plugins import FastMarkerCluster, MarkerCluster
@@ -125,6 +125,17 @@ def map(request):
         
     #     context = {'map': m._repr_html_(), 'gu_dong_mapping' : gu_dong_mapping}
     #     return render(request, "map.html", context)
+
+
+def show_bike_list(request):
+
+    gu_name = request.GET.get('addr2')
+    dong_name = request.GET.get('addr1')
+
+    bike_list = Station.objects.filter(gu = gu_name, dong = dong_name).values('stationName', 'parkingBikeTotCnt', 'gu', 'dong')
+    return JsonResponse(list(bike_list), safe=False)
+
+
 
 def pollenbike (request):
     return render(request, "pollenbike.html")

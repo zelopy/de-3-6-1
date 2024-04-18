@@ -12,19 +12,22 @@
 </head>
 <body>
 
-<h1>다른 요소들</h1>
-
-
 <div id="mapContainer">
     <!-- 데이터를 표시할 컨테이너 -->
 </div>
+
+
+<div id="bikeList">
+    <!-- 자전거 리스트를 표시할 공간 -->
+</div>
+
 
 <script>
     // URL에서 데이터를 가져오고 페이지에 추가하는 함수
     function loadDataFromURL() {
         // 변수 선언
-        var addr2 = "";  // 기본값 설정
-        var addr1 = "";  // 기본값 설정
+        var addr2 = "강남구";  // 기본값 설정
+        var addr1 = "청담동";  // 기본값 설정
 
         // 쿼리 문자열 생성
         var queryString = "";
@@ -32,7 +35,7 @@
             queryString = "?addr2=" + encodeURIComponent(addr2) + "&addr1=" + encodeURIComponent(addr1);
         }
 
-        // 가져올 데이터의 URL
+        // 맵 데이터 가져오기
         var url = "http://127.0.0.1:8000/map/" + queryString;
 
         fetch(url)
@@ -42,6 +45,23 @@
                 document.getElementById('mapContainer').innerHTML = data;
             })
             .catch(error => console.error('Error fetching data:', error));
+
+        // 자전거 리스트 가져오기
+        var urlList = "http://127.0.0.1:8000/map/list" + queryString;
+
+        fetch(urlList)
+            .then(response => response.json())
+            .then(data => {
+                // 가져온 자전거 리스트 데이터를 화면에 표시
+                var bikeListDiv = document.getElementById('bikeList');
+                var listHTML = "<ul>";
+                data.forEach(bike => {
+                    listHTML += "<li>" + bike.stationName + " - " + bike.parkingBikeTotCnt + "</li>";
+                });
+                listHTML += "</ul>";
+                bikeListDiv.innerHTML = listHTML;
+            })
+            .catch(error => console.error('Error fetching bike list:', error));
     }
 
     // 페이지 로드 시 실행되는 함수
@@ -50,6 +70,8 @@
         loadDataFromURL();
     };
 </script>
+
+
 
 </body>
 </html>
