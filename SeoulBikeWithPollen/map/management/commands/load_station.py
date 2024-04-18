@@ -29,6 +29,26 @@ class Command(BaseCommand):
                 self.stderr.write(f'Error occured while loading station : {serializer.errors}')
 
 
+        # Station 모델에 자치구와 행정동 추가
+        csv_file_path = 'map/data/seoulblikeinfo.csv'
+        with open(csv_file_path, 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                station_name = row['station_name']
+                gu = row['gu']
+                dong = row['ADM_NM']
+
+                # Station 모델에서 station_name으로 객체 찾은 후 gu, dong 추가
+                try:
+                    station = Station.objects.get(stationName__icontains = station_name)
+                except Station.DoesNotExist:
+                    self.stdout.write(f'Station {station_name} does not exist')
+                
+                station.gu = gu
+                station.dong = dong
+                station.save()
+
+
         # 지도를 나눌 행정동별 중심 좌표를 불러와서 행정동 별로 나누어서 Location 모델에 저장
         with open('map/data/location_center.csv', 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
