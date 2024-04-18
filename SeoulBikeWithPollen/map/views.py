@@ -47,8 +47,8 @@ def map(request):
             
 
                 # 정거장 클릭 시 나타낼 정보 표시
-                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt) + '<br>' + '<b>' + '꽃가루 농도' + '</b><br>' + '소나무 : ' + pine_level + '<br>' '참나무 : ' + oak_level)
-                popup = folium.Popup(iframe, min_width = 250, max_width = 250, min_height = 135, max_height = 135)
+                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt) + '<br><b>' + '꽃가루 농도' + '</b><br>' + '소나무 : ' + str(pine_level) + '<br>' '참나무 : ' + str(oak_level))
+                popup = folium.Popup(iframe, min_width = 250, max_width = 250, min_height = 150, max_height = 150)
                 
                 
                 
@@ -82,7 +82,7 @@ def map(request):
                 coordinate = (station.stationLatitude, station.stationLongitude)
 
                 # 정거장 클릭 시 나타낼 정보 표시
-                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt))
+                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt) + '<br><b>' + '꽃가루 농도' + '</b><br>' + '소나무 : ' + str(pine_level) + '<br>' '참나무 : ' + str(oak_level))
                 popup = folium.Popup(iframe, min_width = 250, max_width = 250, min_height = 135, max_height = 135)
                 
                 
