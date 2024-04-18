@@ -32,8 +32,8 @@ def map(request):
             m = folium.Map(location = initial_location,
                         control_scale = True,
                         zoom_start= 12, 
-                        width = 1000, 
-                        height = 800)
+                        width = "100%", 
+                        height = "100%")
             
             # MarkerCluster 이용해서 커스텀 마커 생성
             mCluster = MarkerCluster(name = "Markers Example").add_to(m)
@@ -67,8 +67,8 @@ def map(request):
             m = folium.Map(location = [latitude, longitude],
                 control_scale = True,
                 zoom_start= 16, 
-                width = 1000, 
-                height = 800)
+                width = "100%", 
+                height = "100%")
         
             mCluster = MarkerCluster(name = "Markers Example").add_to(m)
 
@@ -126,5 +126,5 @@ def map(request):
     #     context = {'map': m._repr_html_(), 'gu_dong_mapping' : gu_dong_mapping}
     #     return render(request, "map.html", context)
 
-def index (request):
+def pollenbike (request):
     return render(request, "pollenbike.html")
