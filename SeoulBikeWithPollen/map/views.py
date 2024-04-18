@@ -28,6 +28,32 @@ def map(request):
         pine_level = request.GET.get('pine_level')
         oak_level = request.GET.get('oak_level')
         
+        def convert_to_gauge_bar(level):
+            colors = {
+                '회색': '#F2F2F2',
+                '초록색': 'green',
+                '노란색': 'yellow',
+                '주황색': 'orange',
+                '빨간색': 'red'
+            }
+            
+            levels = {
+                '낮음': '초록색 회색 회색 회색',
+                '보통': '노란색 노란색 회색 회색',
+                '높음': '주황색 주황색 주황색 회색',
+                '매우 높음': '빨간색 빨간색 빨간색 빨간색'
+            }
+            
+            bars = levels.get(level, '회색 회색 회색 회색').split()
+            
+            gauge_bars = ''.join([f'<div style="background-color: {colors.get(bar, "gray")}; width: 11%; height: 7px; margin-right: 0.7%; display: inline-block; border-radius: 4px;"></div>' 
+ for bar in bars])
+            
+            return gauge_bars
+
+        pine_gauge = convert_to_gauge_bar(pine_level)
+        oak_gauge = convert_to_gauge_bar(oak_level)
+        
 
         # 초기 지도 (구,동 입력이 없을 때)
         if gu_name is None and dong_name is None:
@@ -47,8 +73,19 @@ def map(request):
             
 
                 # 정거장 클릭 시 나타낼 정보 표시
-                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt) + '<br><b>' + '꽃가루 농도' + '</b><br>' + '소나무 : ' + str(pine_level) + '<br>' '참나무 : ' + str(oak_level))
-                popup = folium.Popup(iframe, min_width = 250, max_width = 250, min_height = 150, max_height = 150)
+                popup_content = (
+                    f'<div style="margin-right: 20px;">'
+                        f"<h4><b>{station.stationName}</b></h4>"
+                        f"<h5>현재 대여 가능한 자전거 수 : {station.parkingBikeTotCnt}</h5>"
+                        "<hr style='border-top: 2px solid #F2F2F2; margin: 10px 0;'>"
+                        "<h4><b>꽃가루 농도</b></h4>"
+                        f"<h5>소나무 : {pine_level}  {pine_gauge}</h5>"
+                        f"<h5>참나무 : {oak_level}  {oak_gauge}</h5>"
+                    f'</div>'
+                )
+        
+                iframe = folium.IFrame(popup_content)
+                popup = folium.Popup(iframe, min_width=280, max_width=400, min_height=500, max_height=600)
                 
                 
                 
@@ -82,8 +119,20 @@ def map(request):
                 coordinate = (station.stationLatitude, station.stationLongitude)
 
                 # 정거장 클릭 시 나타낼 정보 표시
-                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt) + '<br><b>' + '꽃가루 농도' + '</b><br>' + '소나무 : ' + str(pine_level) + '<br>' '참나무 : ' + str(oak_level))
-                popup = folium.Popup(iframe, min_width = 250, max_width = 250, min_height = 135, max_height = 135)
+                popup_content = (
+                    f'<div style="margin-right: 20px;">'
+                        f"<h4><b>{station.stationName}</b></h4>"
+                        f"<h5>현재 대여 가능한 자전거 수 : {station.parkingBikeTotCnt}</h5>"
+                        "<hr style='border-top: 2px solid #F2F2F2; margin: 10px 0;'>"
+                        "<h4><b>꽃가루 농도</b></h4>"
+                        f"<h5>소나무 : {pine_level}  {pine_gauge}</h5>"
+                        f"<h5>참나무 : {oak_level}  {oak_gauge}</h5>"
+                    f'</div>'
+                )
+        
+                iframe = folium.IFrame(popup_content)
+                popup = folium.Popup(iframe, min_width=280, max_width=400, min_height=500, max_height=600)
+
                 
                 
                 if station.parkingBikeTotCnt == 0:
@@ -136,7 +185,7 @@ def map(request):
 def show_bike_list(request):
 
     gu_name = request.GET.get('addr2')
-    dong_name = request.GET.get('addr1')
+    dong_name = request.GET.get('addr3')
 
     bike_list = Station.objects.filter(gu = gu_name, dong = dong_name).values('stationName', 'parkingBikeTotCnt', 'gu', 'dong')
     return JsonResponse(list(bike_list), safe=False)
