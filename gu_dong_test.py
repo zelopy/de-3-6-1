@@ -9,7 +9,7 @@ items.extend(json.loads(res3.text)['rentBikeStatus']['row'])
         
 
 # 정거장 정보 중 몇개는 위치 정보를 찾을 수 없음
-# 현재 총 데이터 중 14개의 구동데이터 빠짐
+# 현재 총 데이터 중 14개의 구동데이터 빠짐, 동 이름이..?
 for i in items:
     apiurl = "https://api.vworld.kr/req/address?"
     params = {
