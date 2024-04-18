@@ -9,8 +9,8 @@ class Station(models.Model):
     stationLatitude = models.FloatField()
     stationLongitude = models.FloatField()
     stationId = models.CharField(max_length=30)
-    # gu = models.CharField(max_length=30)
-    # dong = models.CharField(max_length=30)
+    gu = models.CharField(max_length=30, default = 'none')
+    dong = models.CharField(max_length=30, default= 'none')
     
     def __str__(self):
         return f"{self.stationName}, 대여 가능 자전거 수 = {self.parkingBikeTotCnt}"

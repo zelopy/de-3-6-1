@@ -11,12 +11,12 @@ import requests
 def map(request):
     stations = Station.objects.all()
     locations = Location.objects.all()
-    gu_names = Location.objects.values_list('guName', flat=True).distinct().order_by('guName')
+    # gu_names = Location.objects.values_list('guName', flat=True).distinct().order_by('guName')
     
-    gu_dong_mapping = {}
-    for gu_name in gu_names:
-        dong_names = Location.objects.filter(guName = gu_name).values_list('dongName', flat = True).distinct().order_by('dongName')
-        gu_dong_mapping[gu_name] = list(dong_names)
+    # gu_dong_mapping = {}
+    # for gu_name in gu_names:
+    #     dong_names = Location.objects.filter(guName = gu_name).values_list('dongName', flat = True).distinct().order_by('dongName')
+    #     gu_dong_mapping[gu_name] = list(dong_names)
 
     # 기본 지도
     # 쿼리 문자열 예시 : http://127.0.0.1:8000/map/?addr2=강남구&addr1=역삼1동
