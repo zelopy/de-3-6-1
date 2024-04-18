@@ -31,8 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'pollen',
     'rest_framework',
+    'map.apps.MapConfig',
+    'pollen',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
