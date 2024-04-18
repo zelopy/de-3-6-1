@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Temp</title>
+</head>
+<body>
+
+<h1>다른 요소들</h1>
+
+
+<div id="mapContainer">
+    <!-- 데이터를 표시할 컨테이너 -->
+</div>
+
+<script>
+    // URL에서 데이터를 가져오고 페이지에 추가하는 함수
+    function loadDataFromURL() {
+        // 변수 선언
+        var addr2 = "강남구";  // 기본값 설정
+        var addr1 = "역삼1동";  // 기본값 설정
+
+        // 쿼리 문자열 생성
+        var queryString = "";
+        if (addr2 !== "" && addr1 !== "") {
+            queryString = "?addr2=" + encodeURIComponent(addr2) + "&addr1=" + encodeURIComponent(addr1);
+        }
+
+        // 가져올 데이터의 URL
+        var url = "http://127.0.0.1:8000/map/" + queryString;
+
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                // 가져온 데이터를 페이지에 추가
+                document.getElementById('mapContainer').innerHTML = data;
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    // 페이지 로드 시 실행되는 함수
+    window.onload = function() {
+        // 데이터를 가져와서 페이지에 추가
+        loadDataFromURL();
+    };
+</script>
+
+</body>
+</html>

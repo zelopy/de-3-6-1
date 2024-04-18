@@ -14,7 +14,7 @@ class Station(models.Model):
     
     def __str__(self):
         return f"{self.stationName}, 대여 가능 자전거 수 = {self.parkingBikeTotCnt}"
- 
+
 
 class Location(models.Model):
     code = models.CharField(max_length=30)
@@ -22,3 +22,5 @@ class Location(models.Model):
     dongName = models.CharField(max_length=30)
     latitude = models.FloatField()
     longitude = models.FloatField()
+
+
