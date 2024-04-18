@@ -4,6 +4,7 @@ import folium
 from folium.plugins import FastMarkerCluster, MarkerCluster
 from map.models import Location, Station
 import requests
+from pollen.pollen_api_service import get_pollen_data
 
 # 
 
@@ -19,11 +20,14 @@ def map(request):
     #     gu_dong_mapping[gu_name] = list(dong_names)
 
     # 기본 지도
-    # 쿼리 문자열 예시 : http://127.0.0.1:8000/map/?addr2=강남구&addr1=역삼1동
+    # 쿼리 문자열 예시 : http://127.0.0.1:8000/map/?addr2=강남구&addr3=역삼1동
     if request.method == 'GET':
 
         gu_name = request.GET.get('addr2')
-        dong_name = request.GET.get('addr1')
+        dong_name = request.GET.get('addr3')
+        pine_level = request.GET.get('pine_level')
+        oak_level = request.GET.get('oak_level')
+        
 
         # 초기 지도 (구,동 입력이 없을 때)
         if gu_name is None and dong_name is None:
@@ -40,10 +44,12 @@ def map(request):
 
             for station in stations:
                 coordinate = (station.stationLatitude, station.stationLongitude)
+            
 
                 # 정거장 클릭 시 나타낼 정보 표시
-                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt))
+                iframe = folium.IFrame('<b>' + station.stationName + '</b><br>' + '현재 대여 가능 : ' + str(station.parkingBikeTotCnt) + '<br>' + '<b>' + '꽃가루 농도' + '</b><br>' + '소나무 : ' + pine_level + '<br>' '참나무 : ' + oak_level)
                 popup = folium.Popup(iframe, min_width = 250, max_width = 250, min_height = 135, max_height = 135)
+                
                 
                 
                 if station.parkingBikeTotCnt == 0:
