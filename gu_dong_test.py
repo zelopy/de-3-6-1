@@ -1,11 +1,12 @@
 res1 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/1/1000/')
 res2 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/1001/2000/')
 res3 = requests.get('http://openapi.seoul.go.kr:8088/576f445751686a6a3636776952594f/json/bikeList/2001/2697/')
+
 items = []
 items.extend(json.loads(res1.text)['rentBikeStatus']['row'])
 items.extend(json.loads(res2.text)['rentBikeStatus']['row'])
 items.extend(json.loads(res3.text)['rentBikeStatus']['row'])
-
+        
 
 # 정거장 정보 중 몇개는 위치 정보를 찾을 수 없음
 # 현재 총 데이터 중 14개의 구동데이터 빠짐
@@ -30,6 +31,15 @@ for i in items:
             if level4[-1] == "가":
                 level4 = (level4+"동")
         else:
-            print("No result found.:")
+            # 위치 정보 없는 코드 임의로 설정
+#             print("No result found.:")
+            level2 = "마포구"
+            level4 = "망원동"
+            
+        i['addr2'] = level2
+        i['addr3'] = level4 
     else:
         print("Error:", response.status_code)
+
+# for l in items:
+#     print(l)
