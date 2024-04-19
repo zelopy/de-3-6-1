@@ -19,4 +19,4 @@ SeoulBikeWithPollen
   * [geopandas](https://geopandas.org/)
 
 ## 4. 결과물
-![seoulbikepollen_01](https://github.com/zelopy/de-3-6-1/assets/33337013/0baa1e19-fd16-447c-8b93-05f76429c210)
+![seoulbikepollen_01](https://github.com/zelopy/de-3-6-1/assets/33337013/a05eae6a-3867-433a-86f1-2f34450352e0)
