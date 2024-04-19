@@ -76,11 +76,13 @@ def get_pollen_data(pollen_type, area_no):
         return "행정구역코드가 없습니다."
     
     # 현재시간
-    cur_hour = datetime.now().strftime('%H')
+    # cur_hour = datetime.now().strftime('%H')
     # 현재시간이 18시 이후라면 today가 비어있기 때문에 06시 기준 데이터를 가져오도록 현재시간 조정
-    if int(cur_hour) > 18:
-        cur_hour = '07'
-    time = datetime.now().strftime('%Y%m%d') + cur_hour
+    # if int(cur_hour) > 18:
+    #     cur_hour = '07'
+    # time = datetime.now().strftime('%Y%m%d') + cur_hour
+
+    time = datetime.now().strftime('%Y%m%d%H')
 
     # 꽃가루 농도 위험 지수(소나무) 조회
     if pollen_type == 'pine':
@@ -108,12 +110,10 @@ def get_pollen_data(pollen_type, area_no):
         todaysaftertomorrow : 글피 예측값 (0~3)
     '''
     json_obj = json.loads(contents)
-    print(json_obj)
 
     return json_obj
 
 # TEST
-# print(os.getcwd())
 # get_pollen_data('pine', 1100000000)
 
 
