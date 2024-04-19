@@ -31,10 +31,10 @@ def map(request):
         def convert_to_gauge_bar(level):
             colors = {
                 '회색': '#F2F2F2',
-                '초록색': 'green',
-                '노란색': 'yellow',
-                '주황색': 'orange',
-                '빨간색': 'red'
+                '초록색': '#A5DF00',
+                '노란색': '#F9F269',
+                '주황색': '#FF8000',
+                '빨간색': '#DF0101'
             }
             
             levels = {

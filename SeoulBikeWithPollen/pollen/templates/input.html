@@ -11,7 +11,7 @@
         /* 전체 글꼴 설정 */
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f5f5f5;
+            background-color: #F5F6F8;
         }
 
         h1, h4 {
@@ -21,20 +21,21 @@
         .btn-primary {
             background-color: #333366; /* 버튼 색상 변경 */
             border-color: #333366;
-        }
+        }       
 
-        /* 결과 박스 스타일링 */
-        #result_pine, #result_oak {
-            margin-top: 10px;
-            padding: 10px;
+        #pollenForm {
+            border: 1px solid #ddd;
+            padding: 20px;
             border-radius: 5px;
-            background-color: #fff; /* 백그라운드 색상 변경 */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* 아이콘 색상 변경 */
-        #pineIcon, #oakIcon {
-            color: gray;
+
+        /* 결과 메시지 스타일링 */
+        #selectMessage {
+            color: #666;
+            margin-top: 10px;
         }
 
     </style>
@@ -51,7 +52,7 @@
             <select id="addr2" name="addr2" class="form-control">
                 <option value="">구를 선택하세요</option>
                 {% for entry in addr_data %}
-                    <option value="{{ entry.addr2 }}">{{ entry.addr2 }}</option>
+                <option value="{{ entry.addr2 }}">{{ entry.addr2 }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -62,16 +63,19 @@
                 <option value="">동을 선택하세요</option>
             </select>
         </div>
-
-        <button type="submit" class="btn btn-primary">조회</button>
+        <br>
+        <button type="submit" class="btn btn-primary btn-block">조회</button>
     </form>
 
     <br>
     <div class="row mt-4">
         <div class="col-md-12">
-            <div id="mapContainer" style="width: 100%; height: 600px;"></div>
+            <div id="mapContainer" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
+    <br>
+    <br>
+
     
 </div>
 
@@ -126,7 +130,13 @@
                         area_no: addr_code
                     },
                     success: function(data) {
-        
+                        console.log(data);
+                
+                        if (!data) {
+                            $('#result_pine').html('<p><strong>데이터 없음</strong></p>');
+                            return;
+                        }
+                
                         const pine_today = data.today;
                         pine_level = pollenLevelText[pine_today];
                 
@@ -144,7 +154,7 @@
                                 oak_level = pollenLevelText[oak_today];
                 
                                 var queryString = `?addr2=${encodeURIComponent($('#addr2').val())}&addr3=${encodeURIComponent($('#addr3').val())}&pine_level=${encodeURIComponent(pine_level)}&oak_level=${encodeURIComponent(oak_level)}`;
-                                var url = "http://127.0.0.1:8000/map/" + queryString;
+                                var url = `http://127.0.0.1:8000/map/${queryString}`;
                 
                                 fetch(url)
                                     .then(response => response.text())
@@ -155,16 +165,16 @@
                 
                             },
                             error: function(error) {
-                                console.log('데이터 로딩 실패');
+                                console.log('데이터 로딩 실패')
                             }
                         });
                 
                     },
                     error: function(error) {
-                        console.log('데이터 로딩 실패');
+                        console.log('데이터 로딩 실패')
                     }
                 });
-
+                
             } else {
                 console.log('데이터 로딩 실패')
             }
