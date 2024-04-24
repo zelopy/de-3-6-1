@@ -74,13 +74,6 @@ def get_pollen_data(pollen_type, area_no):
     # area_no = 1100000000
     if area_no is None:
         return "행정구역코드가 없습니다."
-    
-    # 현재시간
-    # cur_hour = datetime.now().strftime('%H')
-    # 현재시간이 18시 이후라면 today가 비어있기 때문에 06시 기준 데이터를 가져오도록 현재시간 조정
-    # if int(cur_hour) > 18:
-    #     cur_hour = '07'
-    # time = datetime.now().strftime('%Y%m%d') + cur_hour
 
     time = datetime.now().strftime('%Y%m%d%H')
 
@@ -112,10 +105,6 @@ def get_pollen_data(pollen_type, area_no):
     json_obj = json.loads(contents)
 
     return json_obj
-
-# TEST
-# get_pollen_data('pine', 1100000000)
-
 
 '''
 구, 동, 행정구역코드 목록 조회 함수.
@@ -172,8 +161,6 @@ def addr_code_list(addr2):
 
     rowList = cursor.fetchall()
 
-    # print(f'rowList:{rowList}')
-
     for row in rowList:
         addr2, addr3, addr_code = row[2], row[3], str(row[0])
 
@@ -190,13 +177,3 @@ def addr_code_list(addr2):
         result.append({'addr2': addr2_tmp, 'addr3': addr3_list})
     
     return result
-
-
-# rs = addr_code_list('강남구')
-# rs = addr_code_list('')
-
-# file_path = 'result.txt'
-# with open(file_path, 'w') as file:
-#     file.writelines(str(rs))
-
-# print(rs)
